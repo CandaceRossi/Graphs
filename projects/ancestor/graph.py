@@ -163,6 +163,7 @@ class Graph:
                         'current_vertex': neighbors,
                         'path': new_path
                     })
+
     def dfs_recursive(self, starting_vertex, destination_vertex, path=[], visited=None):
         """
         Return a list containing a path from
@@ -171,8 +172,8 @@ class Graph:
         This should be done using recursion.
         """
         if path is None:
-            path = []  
-        # visited = [starting_vertex]     
+            path = []
+        # visited = [starting_vertex]
         if visited is None:
             visited = set()
         visited.add(starting_vertex)
@@ -182,10 +183,13 @@ class Graph:
         for neighbor in self.get_neighbors(starting_vertex):
             if neighbor not in visited:
                 visited.add(neighbor)
-                new_stack = self.dfs_recursive(neighbor, destination_vertex, path, visited)
-                if new_stack:
-                    return new_stack
+                new_stack = self.dfs_recursive(
+                    neighbor, destination_vertex, path, visited)
+                # if new_stack:
+                #     return new_stack
         return None
+
+                
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
     # https://github.com/LambdaSchool/Graphs/blob/master/objectives/breadth-first-search/img/bfs-visit-order.png

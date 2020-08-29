@@ -1,6 +1,7 @@
 from room import Room
 from player import Player
 from world import World
+from util import Stack, Queue
 
 import random
 from ast import literal_eval
@@ -10,11 +11,11 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-# map_file = "maps/test_line.txt"
+map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+# map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -28,7 +29,27 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
+stack = Stack()
+stack.push(world.rooms[0])
 
+current_room_id = player.current_room.id
+exits = player.current_room.get_exits()
+travel_direction = player.travel(direction)
+
+#while player moves around 
+while stack.size() > 0 and travel_direction is not None:
+    current_path = stack.pop()
+    current_vertex = current_path[-1]
+    for exits in current_vertex:
+        if current_vertex not in traversal_path:
+            traversal_path.append(current_vertex)
+    # Do something cool while you traverse
+        # if current_vertex
+
+    for neighbor in graph[current_vertex]:
+        path_copy = list(current_path)
+        path_copy.append(neighbor)
+        stack.push(path_copy)
 
 
 # TRAVERSAL TEST

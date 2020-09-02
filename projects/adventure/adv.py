@@ -11,11 +11,11 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
+# map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -30,28 +30,51 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 stack = Stack()
-stack.push(world.rooms[0])
-
+visited = set()
+exits_visited = set()
+queue = Queue()
+directions = ["n", "s", "e", "w"]
+reverse = {"n":"s", "s":"n", "e":"w", "w":"e"}
 current_room_id = player.current_room.id
-exits = player.current_room.get_exits()
-travel_direction = player.travel(direction)
+current_room = world.starting_room
 
-#while player moves around 
-while stack.size() > 0 and travel_direction is not None:
-    current_path = stack.pop()
-    current_vertex = current_path[-1]
-    for exits in current_vertex:
-        if current_vertex not in traversal_path:
-            traversal_path.append(current_vertex)
-    # Do something cool while you traverse
-        # if current_vertex
+visited.add(current_room_id)
+while len(visited) != len(room_graph):
+    exits = current_room.get_exits()
+    exits_visited.add(current_room)
+    if current_room.id not in visited:
+        visited.add(current_room.id)
 
-    for neighbor in graph[current_vertex]:
-        path_copy = list(current_path)
-        path_copy.append(neighbor)
-        stack.push(path_copy)
-
-
+    if "n" in exits and current_room.get_room_in_direction("n") not in exits_visited:
+        #add path
+        traversal_path.append("n")
+        stack.push("n")
+        #update current room
+        current_room = current_room.get_room_in_direction("n")
+    #do for all directions
+    elif "s" in exits and current_room.get_room_in_direction("s") not in exits_visited:
+        traversal_path.append("s")
+        stack.push("s")
+        current_room = current_room.get_room_in_direction("s")
+    elif "e" in exits and current_room.get_room_in_direction("e") not in exits_visited:
+        traversal_path.append("e")
+        stack.push("e")
+        current_room = current_room.get_room_in_direction("e")
+    elif "w" in exits and current_room.get_room_in_direction("w") not in exits_visited:
+        traversal_path.append("w")
+        stack.push("w")
+        current_room = current_room.get_room_in_direction("w")
+    
+    else:
+    # remove the last valid direction from the stack
+        current_path = stack.pop()
+    # get the reverse direction from the reverse dictionary
+        reverse_path = reverse.get(current_path)
+    # add the reverse direction to the traversal path
+        traversal_path.append(reverse_path)
+    # sets current room in reverse direction
+        current_room = current_room.get_room_in_direction(reverse_path)
+        
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
